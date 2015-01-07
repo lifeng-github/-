@@ -1,0 +1,76 @@
+shell基本命令
+补全键:<TAB>
+显示当前目录:pwd
+改变目录:cd
+*提示:在shell中..代表上一级，而.则代表当前目录，另外~代表用户主目录
+列出目录内容：list
+默认情况下，目录显示为蓝色，普通显示黑色，可执行文件显示为草绿色，链接文件显示为淡蓝色
+列出链接文件：list -F
+列出目录：dir
+查看文本文件：cat more less head tail五个指令都可以。
+查看文件内容：grep
+查看文件：find
+快速定位文件：locate
+查找特定程序：whereis
+查看用户及版本信息： who  whoami uname 三个指令
+获取命令简介：whatis 和 apropos
+
+文件管理
+增加用户组 addgroup
+新建目录：mkdir -p
+修改文件权限：chgrp ,chown, chmod
+*chmod的使用：sudo chmod g+rwx work/   chmod o-rwx work/  （u是文件属主，a是所有人，o是其他人）
+*chgrg的使用：sudo chgrp workgroup1 work/
+*chown的使用：sudo chown lili work/
+新建一个空文件：touch 
+移动文件：mv
+复制文件：cp
+删除文件：rm rmdir(删除目录) 
+建立链接：ln 
+输出重定向：>
+输入重定向：<
+管道：|
+
+软件包管理
+安装指令：dpkg -i(ubuntu和debian) rpm -ivh(red hat)
+卸载指令：dpkg -r   , rpm -e
+查看安装的包： dpkg -l|grep xxx   , rpm --query xxx
+高级软件包工具：apt-get install 下载安装 apt-get upgrade 下载并安装在本系统已有的所有软件包的最新版本
+apt-get remove 卸载特定的软件包  apt-get source 下载特定的软件源文件 apt-get clean 删除所有已下载的包文件
+高级查询软件包工具：apt-cache search xxx
+
+
+磁盘管理
+硬盘的接口：SCSI和IDE以前在通知地位，现在串口SATA接口价格下降，现在大部分电脑都用SATA接口硬盘
+#磁盘的类型：操作系统必须用一种特定的方式对磁盘惊醒操作。window用NTFS和FAT两种文件系统，而linux
+从ext3fs-->ext4fs--->ReiserFS，光盘的格式是iso9660
+*swap是交换分区，当实际内存不够的时候，会把一些暂时不用的数据放入到交换区中，从而给实际内存足够的
+空间，swap也可以成为操作系统的“虚拟内存”这个比较好理解。
+*硬盘一般分为IDE硬盘，SCSI硬盘和SATA硬盘，IDE接口的设备被称为hd，SCSI和SATA接口的设备则被称为
+sd.第一块硬盘被称为sda,第二块称为sdb,一次类推。linux规定，一块硬盘上只能4个主分区，分别为
+sda1,sda2,sda3,sda4,逻辑分区从5开始标记。
+设备挂载：mount
+取消挂载：unmount
+查看磁盘使用情况：df
+检查和修复文件系统：fsck
+磁盘格式化：mkfs (在格式化必须取消挂载)
+*linux会将USB设备识别为第一个没有被硬盘占用的SCSI设备
+列出打钱内核已经发现的USB设备：lsusb
+压缩文件：gzip
+解压文件：gunzip 或者gzip -d
+更高的压缩率：bzip2
+解压文件：bunzip2 或者bunzip -d 
+文件打包：tar -cvf
+解开tar文件：tar -xvf
+转移文件：dd
+安装硬盘和分区：fdisk
+删除分区：delete
+创建并激活交换分区：mkswap（初始化）-->swapon (激活)
+查看当前系统存在的交换区：swapon -s
+*配置fstab文件，这样刚才创建的分区和交换区才能在系统启动的时候加载到系统中。
+备份文件系统：dump
+从灾难中恢复：restore
+让备份定时自动完成：cron
+
+
+用户和用户组管理
