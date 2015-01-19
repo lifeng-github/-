@@ -74,3 +74,90 @@ sda1,sda2,sda3,sda4,逻辑分区从5开始标记。
 
 
 用户和用户组管理
+添加用户：sudo useradd -m lilei ##添加用户名lilei用户，并自动建立目录
+给添加用户设置密码： sudo passwd lilei  ##更改john的登录密码
+添加用户并数据test组： sudo useradd -g test lilei
+添加组：sudo groupadd test
+记录用户操作：history 10 ##列出最近使用的10条命令
+*所有的用户信息保存在/etc/passwd文件中，所有用户登录密码保存在/etc/shadow文件中
+删除用户：sudo userdel lilei
+删除用户以及他的目录： sudo userdel -r lilei
+管理用户账号：sudo usermod -l hanmeimei -d /home/hanmeimei -e 12/31/15 lilei
+##把李雷名称修改为韩梅梅的，且有效期到2015年底
+## -d 修改用户目录 ， -e修改账户的有效期限。 -g修改用户所属的组 ,-l 修改用户名称, -s修改用户
+登录后所使用的Shell.
+查看用户信息：id
+用户间的切换：su ##使用exit回到使用前的账号
+受限的特权：sudo
+*管理员通过配置/etc/sudoers指定用户可以执行的特权命令
+
+
+进程管理
+前台终止：CTRL+CTRL
+监视进程：ps 
+及时跟踪进程信息：top 
+查看占用文件的进程：lsof 
+向进程发送信号：kill xxx pid ##xx是信号量 ，pid是进程id kill -l呈现所有信号量信息
+*快捷键Ctrl+C对应于信号INT。
+调整进程的谦让度：nice -n 2 pname ##以多少谦让度来启动这个进程
+还有一个调整谦让度：renice +12 -p pid ##让进程pid的进程以谦让度修改为12
+#谦让度越高，表示越能容忍，优先级就越低。
+*/proc文件系统，proc目录下存放着内核有关系统状态的各种有意义的信息。在系统运行的时候
+内核会随时间向这个目录写入数据。ps和top命令就是从这个地方读取数据的。事实上，这个是
+操作系统向用户提供的一条通往内核的通道，用户甚至可以通过向/proc目录下的文件写入数据来
+修改操作系统参数。
+
+网络配置
+*有线宽带上网：ADSL ,ADSL是当前用户使用最多的互联网连入方式。ADSL使用以太网PPPoE调解器
+设置实现连接。这个称作“点对点”的拨号方式
+开启ppp连接：sudo pon dsl-provider
+关闭ppp连接：sudo poff dsl-provider
+使用ifconfig配置网络接口
+启动网络接口：sudo ifconfig eth0 192.168.1.12 netmask 255.255.255.0 up
+关闭网络接口：sudo ifconfig eth0
+当前系统中的路由信息：netstat -r
+增加一个路由：sudo route add default gw 10.71.84.255
+是主机能访问某个网络，就要添加一个路由：
+sudo route add -net 10.62.74.0/24 gw 10.71.84.51 ##-net 后面紧跟的是一个网络地址，也就是目标
+网络，关键字gw指定Linux把所有发送到10.62.74.0这个网络中的主机包，全部转发到10.71.84.51上，
+这个网关知道怎么连接目标网络。
+sudo route add -host 10.62.74.4 gw 10.71.84.51 ##把发送到主机10.62.74.4的包，转发到网关10.71.84.51
+删除一条路由：sudo route del default
+
+
+传输文件
+基于文本的浏览器：lynx url ##打开url网页
+*Linux间的网络硬盘：NFS,NFS目前只能用于Linux和UNIX主机共享文件系统。通过NFS可以方便的将一台Linux（UNIX）
+主机上的文件系统挂载到本地。当然先要求对方的主机开启了NFS服务。并对“共享”文件做了相关的设置。
+*安装NFS文件系统，使用mount命令安装NFS文件系统。从某种程度上，这和安装本地文件系统是一样的，区别仅仅在
+于需要给mount命令指定一个远程主机名。安装NFS最简单的命令如下
+sudo mount 10.171.37.1:/srv/nfs_share  share/
+将主机10.171.37.1上导出的/srv/nfs_share 安装到share目录下。如果没有正确导出目录，使用-e选项的showmount
+可以查看服务端导出的目录：sudo showmount -e 10.171.37.1
+卸载NFS文件系统：sudo umount share/
+查看那些进程使用这个文件系统：lsof share/
+安装不同选项的文件系统：sudo mount -o rw,hard,intr,bg 10.171.37.1:/srv/nfs_share  share/ ##rw 以读写方式
+安装文件系统，ro 以读方式安装文件系统， bg 如果安装失败，那么在后台继续发送安装请求，hard "硬安装"方式
+如果服务器没有响应，那么暂时挂起对服务器的访问，知道服务器恢复，soft "软安装"方式。如果服务器没有响应，
+那么返回一条错误信息，并中断正在执行的操作， intr 允许用户终端某项操作，并返回一条错误信息。nointr 不允许
+用户中断， timeo=n 请求超时时间。n以十分之秒的单位， tcp 使用Tcp协议传输文件（默认选择UDP），async 要求服务器
+在实际写磁盘之前就回应客户机的写请求
+*启动是自动安装远程文件系统，和本地文件系统一样，可以配置/etc/fstab文件系统启动时自动安装NFS文件系统。
+用root的身份在/etc/fstab文件加入下面一行
+10.171.37.1:/srv/nfs_share	/home/lilei/share	nfs	 rw，hard,intr,bg  0  0
+测试NFS配置立即生效：sudo mount -a -t nfs 
+*linux和window协作：安装samba服务
+查看当前可用的Samba资源：smbtree -S
+指定和共享的主机建立链接：smbtree -b -U smbuser ##-b选项是广播方式在整个网络查询，-U指定主机名为smbuser的
+主机，并建立连接。并展示smbuser的共享资源。
+查看共享主机的ip：nmblookup smbuser ##查看主机名为smbuser的ip地址
+*Linux下的Samba客户端：smbclient
+连接共享主机的目录：smbclient //172.16.25.128/share 
+smbclient的命令和FTP客户端的命令行基本一样
+如果连接的主机不允许匿名连接：smbclient //172.16.25.128/share -U smbusename ##用用户名为smbusename来登录
+*在linux中同样可以像使用NFS文件系统一样，将Windows共享目录挂载到本地的某个目录下。在SMB改名之前，这个客户
+端成叫做smbmount.但是现在也相应地改成mount.cifs,Ubuntu Linux在提供mount.cifs的同时，仍然保留smbmount。但是
+openSUSE已经完全屏蔽smbmount.为了使用mount.cifs，用户可能需要安装相应的软件包。
+mount.cifs service mount-point [-o options]
+sudo mount.cifs //172.16.25.128/share  /srv/share -o user=smbusename ##等价于下面的指令
+sudo mount -t cifs //172.16.25.128/share  /srv/share -o user=smbusename
