@@ -19,7 +19,7 @@ shell基本命令
 增加用户组 addgroup
 新建目录：mkdir -p
 修改文件权限：chgrp ,chown, chmod
-*chmod的使用：sudo chmod g+rwx work/   chmod o-rwx work/  （u是文件属主，a是所有人，o是其他人）
+*chmod的使用：sudo chmod g+rwx work/   chmod o-rwx work/ chmod og=rw,a=x work/ （u是文件属主，a是所有人，o是其他人）
 *chgrg的使用：sudo chgrp workgroup1 work/
 *chown的使用：sudo chown lili work/
 新建一个空文件：touch 
