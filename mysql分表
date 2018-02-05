@@ -216,3 +216,5 @@ possible_keys: NULL
      Extra: 
 1 row in set (0.00 sec)
 上面的结果：partitions:p1 表示数据在p1分区进行检索。
+
+http://www.notehub.cn/2016/03/20/dev/mysql_partition/
